@@ -1,49 +1,17 @@
-import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
-// Create axios instance
-const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json'
-    }
-});
+import api from '../api';
 
-// Request interceptor to add auth token
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
 
-// Response interceptor to handle token expiration
-api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            // Token expired or invalid
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        }
-        return Promise.reject(error);
-    }
-);
+// Add request/response interceptors if needed (already handled in api.js or can be added there)
 
 // Authentication API calls
 export const authService = {
     // Register new user
+
     register: async (userData) => {
         try {
-            const response = await api.post('/auth/register', userData);
+            const response = await api.post('/api/v1/auth/register', userData);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Registration failed' };
@@ -51,9 +19,10 @@ export const authService = {
     },
 
     // Login user
+
     login: async (credentials) => {
         try {
-            const response = await api.post('/auth/login', credentials);
+            const response = await api.post('/api/v1/auth/login', credentials);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Login failed' };
@@ -61,9 +30,10 @@ export const authService = {
     },
 
     // Get user profile
+
     getProfile: async () => {
         try {
-            const response = await api.get('/auth/profile');
+            const response = await api.get('/api/v1/auth/profile');
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to get profile' };
@@ -71,9 +41,10 @@ export const authService = {
     },
 
     // Update user profile
+
     updateProfile: async (userData) => {
         try {
-            const response = await api.put('/auth/profile', userData);
+            const response = await api.put('/api/v1/auth/profile', userData);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to update profile' };
@@ -83,7 +54,7 @@ export const authService = {
     // Change password
     changePassword: async (passwordData) => {
         try {
-            const response = await api.put('/auth/change-password', passwordData);
+            const response = await api.put('/api/v1/auth/change-password', passwordData);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to change password' };
@@ -96,7 +67,7 @@ export const notesService = {
     // Get all notes
     getAllNotes: async () => {
         try {
-            const response = await api.get('/allNotes');
+            const response = await api.get('/api/v1/allNotes');
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to fetch notes' };
@@ -106,7 +77,7 @@ export const notesService = {
     // Add new note
     addNote: async (noteData) => {
         try {
-            const response = await api.post('/addNote', noteData);
+            const response = await api.post('/api/v1/addNote', noteData);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to add note' };
@@ -116,7 +87,7 @@ export const notesService = {
     // Get single note
     getNote: async (noteId) => {
         try {
-            const response = await api.get(`/noteDetails/${noteId}`);
+            const response = await api.get(`/api/v1/noteDetails/${noteId}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to fetch note' };
@@ -126,7 +97,7 @@ export const notesService = {
     // Update note
     updateNote: async (noteId, noteData) => {
         try {
-            const response = await api.patch(`/updateNote/${noteId}`, noteData);
+            const response = await api.patch(`/api/v1/updateNote/${noteId}`, noteData);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to update note' };
@@ -136,7 +107,7 @@ export const notesService = {
     // Delete note
     deleteNote: async (noteId) => {
         try {
-            const response = await api.delete(`/deleteNote/${noteId}`);
+            const response = await api.delete(`/api/v1/deleteNote/${noteId}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to delete note' };
